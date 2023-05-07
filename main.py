@@ -1,4 +1,4 @@
-from vkinder.bot_functions import menu
+from bot_functions import menu
 
 
 if __name__ == '__main__':

@@ -2,7 +2,7 @@ import sqlalchemy as sq
 from sqlalchemy.orm import sessionmaker
 from settings import postgresql
 from sqlalchemy.exc import IntegrityError, InvalidRequestError
-from models_db import create_tables, User, FavoritesProfile, Photos, BlackProfile
+from models_db import create_tables, User, FavoritesProfile, Photos
 from vk_info_user import get_photo, sort_photo
 
 system = 'postgresql'
@@ -39,23 +39,11 @@ def check_user(vk_id):
     return current_user_id
 
 
-def add_user_profile(list_, vk_id):
+def add_user_profile(list_, vk_id, index):
     """Adds questionnaires to the table 'favorites_profile'."""
     if favorite_profile_bd(list_[0]) is None:
         new_profile = FavoritesProfile(vk_id=list_[0], first_name=list_[1], last_name=list_[2], city=list_[4],
-                                       link=list_[5], id_user=get_id_user_for_fl(vk_id))
-        session.add(new_profile)
-        session.commit()
-        return True
-    else:
-        return False
-
-
-def add_black_user_profile(list_, vk_id):
-    """Adds questionnaires to the table 'black_profile'."""
-    if black_profile_bd(list_[0]) is None:
-        new_profile = BlackProfile(vk_id=list_[0], first_name=list_[1], last_name=list_[2], city=list_[4],
-                                   link=list_[5], id_user=get_id_user_for_fl(vk_id))
+                                       link=list_[5], id_user=get_id_user_for_fl(vk_id), index_favorite_black=index)
         session.add(new_profile)
         session.commit()
         return True
@@ -66,12 +54,6 @@ def add_black_user_profile(list_, vk_id):
 def favorite_profile_bd(vk_id):
     """Checks the questionnaires in the table 'favorites_profile'."""
     current_user_id = session.query(FavoritesProfile).filter_by(vk_id=vk_id).first()
-    return current_user_id
-
-
-def black_profile_bd(vk_id):
-    """Checks the questionnaires in the table 'black_profile'."""
-    current_user_id = session.query(BlackProfile).filter_by(vk_id=vk_id).first()
     return current_user_id
 
 
@@ -96,14 +78,16 @@ def get_id_fp_for_photos(vk_id):
 def check_db_favorites(vk_id):
     """Checks the questionnaires in the table 'favorites_profile'."""
     current_users_id = check_user(vk_id)
-    all_users = session.query(FavoritesProfile).filter_by(id_user=current_users_id.id_user).all()
+    all_users = session.query(FavoritesProfile).filter_by(id_user=current_users_id.id_user,
+                                                          index_favorite_black=1).all()
     return all_users
 
 
 def check_db_black(vk_id):
     """Checks the questionnaires in the table 'black_profile'."""
     current_users_id = check_user(vk_id)
-    all_users = session.query(BlackProfile).filter_by(id_user=current_users_id.id_user).all()
+    all_users = session.query(FavoritesProfile).filter_by(id_user=current_users_id.id_user,
+                                                          index_favorite_black=0).all()
     return all_users
 
 

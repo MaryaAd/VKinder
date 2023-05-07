@@ -7,11 +7,11 @@ def get_info_users(id_user):
     id_user = id_user
     vk = vk_api.VkApi(token=KEY_GROUP)
     response = vk.method('users.get', {'user_ids': id_user, 'fields': 'city, sex, bdate'})
-    try:
+    if 'city' in response[0]:
         user_info = [response[0]['id'], response[0]['first_name'], response[0]['last_name'],
                      response[0]['sex'], response[0]['city']['title'], f'https://vk.com/id{response[0]["id"]}']
         return user_info
-    except KeyError:
+    else:
         user_info = [response[0]['id'], response[0]['first_name'], response[0]['last_name'],
                      response[0]['sex'], None, f'https://vk.com/id{response[0]["id"]}']
         return user_info
@@ -58,7 +58,9 @@ def get_photo(owner_id):
         for i in range(len(response['items'])):
             users_photos.append(
                 [response['items'][i]['likes']['count'],
-                 response['items'][i]['sizes'][-1]['url']])
+                 response['items'][i]['owner_id'],
+                 response['items'][i]['sizes'][-1]['url'],
+                 response['items'][i]['id']])
         return users_photos
     except(vk_api.exceptions.ApiError, TypeError):
         pass

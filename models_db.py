@@ -20,18 +20,7 @@ class FavoritesProfile(Base):
     last_name = sq.Column(sq.String)
     city = sq.Column(sq.String)
     link = sq.Column(sq.String)
-    id_user = sq.Column(sq.Integer, sq.ForeignKey('user.id_user', ondelete='CASCADE'))
-
-
-class BlackProfile(Base):
-    """Table model 'black_profile'"""
-    __tablename__ = 'black_profile'
-    id_black_profile = sq.Column(sq.Integer, primary_key=True)
-    vk_id = sq.Column(sq.Integer, unique=True)
-    first_name = sq.Column(sq.String)
-    last_name = sq.Column(sq.String)
-    city = sq.Column(sq.String)
-    link = sq.Column(sq.String)
+    index_favorite_black = sq.Column(sq.Integer)
     id_user = sq.Column(sq.Integer, sq.ForeignKey('user.id_user', ondelete='CASCADE'))
 
 
